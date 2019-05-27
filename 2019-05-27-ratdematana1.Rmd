@@ -1,0 +1,44 @@
+---
+title: "ratdematana1"
+author: "gabriel lin"
+date: '2019-05-27'
+slug: ratdematana1
+tags:
+- plot
+- regression
+- RStudio
+- Markdown
+categories: R
+---
+
+
+```{r}
+
+library(blogdown)
+```
+
+
+```{r results='hide', message=FALSE, warning=FALSE}
+setwd("C:/Users/gabriel/Desktop/space_analyze")
+
+library(GISTools,verbose = F)
+library(splancs,verbose = F)
+library(rgdal,verbose = F)
+library(raster,verbose = F)
+TW=readOGR(dsn = ".", layer = "Popn_TWN2", encoding="utf8")
+event=read.table("./all_points.csv", header = T, sep = ",")
+coords=event[,2:3]
+PTS1=SpatialPointsDataFrame(coords,event,proj4string = CRS(proj4string(TW)))
+twn=gUnaryUnion(TW,TW@data$COUNTY)
+plot(twn)
+points(PTS1,col="blue",pch=16)
+
+kde.pts1=kde.points(PTS1,100000,500,lims=twn)
+plot(kde.pts1,axes=F,col=brewer.pal(9,'Oranges'))  #Oranges,YlOrBr,Greens,GnBu
+masker=poly.outer(kde.pts1,TW)
+add.masking(masker,col="white")
+plot(twn, add=T)
+
+
+
+```
